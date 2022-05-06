@@ -27,11 +27,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-          N8N_VERSION: ${{ github.event.inputs.n8n_version }}
       -
         name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
+          build-args: N8N_VERSION=${{ github.event.inputs.n8n_version }}
           push: true
           tags: codelytvtech/n8n-custom-image:${{ github.event.inputs.n8n_version }}
