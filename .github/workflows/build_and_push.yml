@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      n8n_version:
+        description: 'N8N version to build'
+        required: true
+        type: string
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          N8N_VERSION: ${{ github.event.inputs.n8n_version }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: codelytvtech/n8n-custom-image:${{ github.event.inputs.n8n_version }}
