@@ -22,7 +22,7 @@ RUN apk --update add --virtual build-dependencies python3 build-base ca-certific
 
 
 # Add custom n8n nodes from Codely
-RUN cd /usr/local/lib/node_modules/n8n && npm install n8n-nodes-twitch
+RUN cd /usr/local/lib/node_modules/n8n && npm install @codelytv/n8n-nodes-twitch
 
 # Install fonts
 RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
