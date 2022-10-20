@@ -20,10 +20,22 @@ RUN apk --update add --virtual build-dependencies python3 build-base ca-certific
 
 # Add custom npm registry for Codely nodes
 
+# Installs latest Chromium (100) package.
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ttf-freefont \
+      yarn
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 # Add custom n8n nodes from Codely
 RUN cd /usr/local/lib/node_modules/n8n && \
-    npm install @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer-extended
+    npm install @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer
 
 # Install fonts
 RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
