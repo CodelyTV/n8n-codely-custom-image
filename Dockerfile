@@ -36,7 +36,7 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 # Add custom n8n nodes from Codely
 RUN cd /usr/local/lib/node_modules/n8n && \
-    npm install @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer cryptr
+    npm install --production --force @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer cryptr
 
 # Install fonts
 RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
