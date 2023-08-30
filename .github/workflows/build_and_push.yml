@@ -27,11 +27,15 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - 
+        name: Replace n8n version in Dockerfile
+        run: sed -i 's/{N8N_VERSION}/${{ github.event.inputs.n8n_version }}/g' Dockerfile
+
       -
         name: Build and push
         uses: docker/build-push-action@v3
         with:
           context: .
-          build-args: N8N_VERSION=${{ github.event.inputs.n8n_version }}
           push: true
           tags: codelytvtech/n8n-custom-image:${{ github.event.inputs.n8n_version }}
