@@ -18,10 +18,11 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
 
 USER node
 
+RUN npm install -g cryptr
+
 RUN mkdir -p ~/.n8n/nodes
 
 # Add custom n8n nodes from Codely
 RUN cd ~/.n8n/nodes && \
-    npm install --production --force @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer cryptr 
-
+    npm install --production --force @codelytv/n8n-nodes-twitch n8n-nodes-puppeteer
   
