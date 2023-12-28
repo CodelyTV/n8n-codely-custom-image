@@ -61,19 +61,3 @@ jobs:
     with:
       n8n_version: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
     secrets: inherit
-
-  create-release:
-    needs: [check-new-release, build-and-push-new-docker-image]
-    runs-on: ubuntu-latest
-
-    timeout-minutes: 1
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: 🏷️ Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          commit: main
-          tag: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
