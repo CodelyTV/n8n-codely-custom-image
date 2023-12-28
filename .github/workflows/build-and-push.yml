@@ -65,8 +65,8 @@ jobs:
     # Reference: https://github.com/orgs/community/discussions/25281
     # The only alternative would be executing it with a workflow_call trigger,
     # but taking into account that this is the single time we would be doing so, it would be a little overkill.
-    name: 💬 Notify new release in Slack
-    needs: create-release
+    name: 💬 Notify new image release in Slack
+    needs: build-push-docker-image
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
