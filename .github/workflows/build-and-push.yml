@@ -10,8 +10,14 @@ on:
 
 jobs:
   docker:
+    timeout-minutes: 5
     runs-on: ubuntu-latest
     steps:
+      - name: Check inputs
+        id: n8n_version
+        run: |
+          echo "👍 n8n_version: ${{ github.event.inputs.n8n_version }}"
+
       - name: Checkout
         uses: actions/checkout@v4
 

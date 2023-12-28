@@ -6,13 +6,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  check:
+  check-new-release:
     runs-on: ubuntu-latest
 
     timeout-minutes: 5
 
     permissions:
       contents: write
+
+    outputs:
+      n8n_version_to_release: ${{ steps.n8n_version.outputs.version_to_release }}
 
     steps:
       - name: 👀 Get the latest custom image stable release
@@ -49,18 +52,28 @@ jobs:
         id: n8n_version
         if: steps.compare_releases.outputs.release_changed == 'true'
         run: |
-          version=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
-          echo "version=$version" >> $GITHUB_OUTPUT
+          version_to_release=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
+          echo "version_to_release=$version_to_release" >> $GITHUB_OUTPUT
 
-      - name: 🐳 Execute Build Docker image and push to Docker Hub workflow
-        if: steps.compare_releases.outputs.release_changed == 'true'
-        uses: ./.github/workflows/build-and-push.yml
-        with:
-          n8n_version: ${{ steps.n8n_version.outputs.version }}
+  build-and-push-new-docker-image:
+    needs: check-new-release
+    uses: ./.github/workflows/build-and-push.yml
+    with:
+      n8n_version: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
+    secrets: inherit
 
+  create-release:
+    needs: [check-new-release, build-and-push-new-docker-image]
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 1
+
+    permissions:
+      contents: write
+
+    steps:
       - name: 🏷️ Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           commit: main
-          tag: '${{ steps.n8n_release.outputs.release }}'
-
+          tag: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
