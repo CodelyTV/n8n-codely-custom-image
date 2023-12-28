@@ -1,10 +1,10 @@
-name: ci
+name: 📦 Build Docker image and push to Docker Hub
 
 on:
   workflow_dispatch:
     inputs:
       n8n_version:
-        description: 'N8N version to build'
+        description: 'n8n version to build'
         required: true
         type: string
 
@@ -12,29 +12,26 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v3
-      -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - 
-        name: Replace n8n version in Dockerfile
+      - name: Replace n8n version in Dockerfile
         run: sed -i 's/{N8N_VERSION}/${{ github.event.inputs.n8n_version }}/g' Dockerfile
 
-      -
-        name: Build and push
-        uses: docker/build-push-action@v3
+      - name: Build and push
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
