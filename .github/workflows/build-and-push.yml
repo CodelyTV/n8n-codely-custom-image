@@ -1,4 +1,4 @@
-name: 📦 Build Docker image and push to Docker Hub
+name: 📦 Build custom Docker image and push to Docker Hub
 
 # Workflow triggered manually (GitHub UI) or programmatically by the check-n8n-new-release workflow
 on:

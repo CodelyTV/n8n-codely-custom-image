@@ -1,4 +1,4 @@
-name: 👀 Check for new n8n stable releases
+name: 👀 Check for new n8n stable releases and builds a new custom image release if needed
 
 on:
   schedule:
@@ -11,11 +11,10 @@ jobs:
 
     timeout-minutes: 5
 
-    permissions:
-      contents: write
-
+    # Needed to share data between jobs. Needed to be separated jobs to reuse the build-and-push.yml workflow.
     outputs:
-      n8n_version_to_release: ${{ steps.n8n_version.outputs.version_to_release }}
+      has_new_release: ${{ steps.compare_releases.outputs.has_new_release }}
+      version_to_release: ${{ steps.n8n_version.outputs.version_to_release }}
 
     steps:
       - name: 👀 Get the latest custom image stable release
@@ -41,23 +40,24 @@ jobs:
           echo "🆕 Latest n8n release: ${{ steps.n8n_release.outputs.release }}"
 
           if [ "${{ steps.custom_image_release.outputs.release }}" != "${{ steps.n8n_release.outputs.release }}" ]; then
-            echo "release_changed=true" >> $GITHUB_OUTPUT
+            echo "has_new_release=true" >> $GITHUB_OUTPUT
             echo "🤩 New release detected! Releasing new custom image version in 1, 2…"
           else
-            echo "release_changed=false" >> $GITHUB_OUTPUT
+            echo "has_new_release=false" >> $GITHUB_OUTPUT
             echo "👍 Release has not changed. Doing nothing."
           fi
 
       - name: 🔡 Remove 'n8n@' from release name to get the version
         id: n8n_version
-        if: steps.compare_releases.outputs.release_changed == 'true'
+        if: steps.compare_releases.outputs.has_new_release == 'true'
         run: |
           version_to_release=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
           echo "version_to_release=$version_to_release" >> $GITHUB_OUTPUT
 
   build-and-push-new-docker-image:
     needs: check-new-release
+    if: ${{ needs.check-new-release.outputs.has_new_release == 'true' }}
     uses: ./.github/workflows/build-and-push.yml
     secrets: inherit
     with:
-      n8n_version: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
+      n8n_version: ${{ needs.check-new-release.outputs.version_to_release }}
