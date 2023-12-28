@@ -58,6 +58,6 @@ jobs:
   build-and-push-new-docker-image:
     needs: check-new-release
     uses: ./.github/workflows/build-and-push.yml
+    secrets: inherit
     with:
       n8n_version: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
-    secrets: inherit
