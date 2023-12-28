@@ -76,4 +76,4 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           commit: main
-          tag: ${{ needs.check-new-release.outputs.n8n_version_to_release }}
+          tag: n8n@${{ needs.check-new-release.outputs.n8n_version_to_release }}
