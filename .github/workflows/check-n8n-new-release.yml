@@ -15,15 +15,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Get the latest n8n stable release
-        id: n8n_release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
-        with:
-          repository: n8n-io/n8n
-          excludes: prerelease,draft
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Get the latest custom image stable release
+      - name: 👀 Get the latest custom image stable release
         id: custom_image_release
         uses: pozetroninc/github-action-get-latest-release@v0.7.0
         with:
@@ -31,10 +23,18 @@ jobs:
           excludes: prerelease,draft
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Compare n8n release versions
+      - name: 🆕 Get the latest n8n stable release
+        id: n8n_release
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        with:
+          repository: n8n-io/n8n
+          excludes: prerelease,draft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🤲 Compare n8n release versions
         id: compare_releases
         run: |
-          echo "✅ Latest Codely custom image release: ${{ steps.custom_image_release.outputs.release }}"
+          echo "👀 Latest Codely custom image release: ${{ steps.custom_image_release.outputs.release }}"
           echo "🆕 Latest n8n release: ${{ steps.n8n_release.outputs.release }}"
 
           if [ "${{ steps.custom_image_release.outputs.release }}" != "${{ steps.n8n_release.outputs.release }}" ]; then
@@ -45,12 +45,19 @@ jobs:
             echo "👍 Release has not changed. Doing nothing."
           fi
 
-      - name: Execute Build Docker image and push to Docker Hub workflow
+      - name: 🔡 Remove 'n8n@' from release name to get the version
+        id: n8n_version
+        if: steps.compare_releases.outputs.release_changed == 'true'
+        run: |
+          version=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
+          echo "version=$version" >> $GITHUB_OUTPUT
+
+      - name: 🐳 Execute Build Docker image and push to Docker Hub workflow
         if: steps.compare_releases.outputs.release_changed == 'true'
         uses: benc-uk/workflow-dispatch@v1.2.2
         with:
           workflow: build-and-push.yml
-          inputs: '{ "n8n_version": "${{ steps.n8n_release.outputs.release }}"}'
+          inputs: '{ "n8n_version": "${{ steps.n8n_version.outputs.version }}"}'
 
       - name: 🏷️ Create GitHub Release
         uses: ncipollo/release-action@v1
