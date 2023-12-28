@@ -11,20 +11,23 @@ jobs:
 
     timeout-minutes: 5
 
-    steps:
-      - name: Get the latest custom image stable release
-        id: custom_image_release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
-        with:
-          repository: CodelyTV/n8n-codely-custom-image
-          excludes: prerelease,draft
-          token: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
 
+    steps:
       - name: Get the latest n8n stable release
         id: n8n_release
         uses: pozetroninc/github-action-get-latest-release@v0.7.0
         with:
           repository: n8n-io/n8n
+          excludes: prerelease,draft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get the latest custom image stable release
+        id: custom_image_release
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        with:
+          repository: CodelyTV/n8n-codely-custom-image
           excludes: prerelease,draft
           token: ${{ secrets.GITHUB_TOKEN }}
 
