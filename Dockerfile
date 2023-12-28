@@ -1,4 +1,7 @@
-FROM n8nio/n8n:{N8N_VERSION}
+ARG N8N_VERSION
+FROM n8nio/n8n:${N8N_VERSION}
+
+RUN if [ -z "$N8N_VERSION" ] ; then echo "✋ The N8N_VERSION argument is missing!" ; exit 1; fi
 
 USER root
 
