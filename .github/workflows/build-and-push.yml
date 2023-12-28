@@ -1,12 +1,6 @@
 name: 📦 Build Docker image and push to Docker Hub
 
 on:
-  workflow_dispatch:
-    inputs:
-      n8n_version:
-        description: 'n8n version to build'
-        required: true
-        type: string
   workflow_call:
     inputs:
       n8n_version:

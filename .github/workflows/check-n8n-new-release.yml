@@ -54,7 +54,7 @@ jobs:
 
       - name: 🐳 Execute Build Docker image and push to Docker Hub workflow
         if: steps.compare_releases.outputs.release_changed == 'true'
-        uses: .github/workflows/build-and-push.yml
+        uses: ./.github/workflows/build-and-push.yml
         with:
           n8n_version: ${{ steps.n8n_version.outputs.version }}
 
