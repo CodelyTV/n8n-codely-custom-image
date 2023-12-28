@@ -7,6 +7,12 @@ on:
         description: 'n8n version to build'
         required: true
         type: string
+  workflow_call:
+    inputs:
+      n8n_version:
+        description: 'n8n version to build'
+        required: true
+        type: string
 
 jobs:
   docker:

@@ -54,10 +54,9 @@ jobs:
 
       - name: 🐳 Execute Build Docker image and push to Docker Hub workflow
         if: steps.compare_releases.outputs.release_changed == 'true'
-        uses: benc-uk/workflow-dispatch@v1.2.2
+        uses: ./.github/workflows/build-and-push.yml
         with:
-          workflow: build-and-push.yml
-          inputs: '{ "n8n_version": "${{ steps.n8n_version.outputs.version }}"}'
+          n8n_version: ${{ steps.n8n_version.outputs.version }}
 
       - name: 🏷️ Create GitHub Release
         uses: ncipollo/release-action@v1
