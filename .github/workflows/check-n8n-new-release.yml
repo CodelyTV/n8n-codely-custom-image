@@ -11,9 +11,9 @@ jobs:
 
     timeout-minutes: 5
 
-    # Needed to share data between jobs. Needed to be separated jobs to reuse the build-and-push.yml workflow.
+    # Output mapping needed to share data between jobs. Separated jobs to reuse the build-and-push.yml workflow.
     outputs:
-      has_new_release: ${{ steps.compare_releases.outputs.has_new_release }}
+      has_new_release: ${{ steps.new_release_check.outputs.has_new_release }}
       version_to_release: ${{ steps.n8n_version.outputs.version_to_release }}
 
     steps:
@@ -33,23 +33,28 @@ jobs:
           excludes: prerelease,draft
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🤲 Compare n8n release versions
-        id: compare_releases
+      - name: 🤲 Check if it is a newer n8n release
+        id: new_release_check
         run: |
           echo "👀 Latest Codely custom image release: ${{ steps.custom_image_release.outputs.release }}"
           echo "🆕 Latest n8n release: ${{ steps.n8n_release.outputs.release }}"
 
-          if [ "${{ steps.custom_image_release.outputs.release }}" != "${{ steps.n8n_release.outputs.release }}" ]; then
+          custom_version=$(echo "${{ steps.custom_image_release.outputs.release }}" | sed 's/n8n@//g')
+          n8n_version=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
+
+          latest_version=$(echo -e "$custom_version\n$n8n_version" | sort -V | tail -n1)
+
+          if [ "$n8n_version" = "$latest_version" ]; then
             echo "has_new_release=true" >> $GITHUB_OUTPUT
             echo "🤩 New release detected! Releasing new custom image version in 1, 2…"
           else
             echo "has_new_release=false" >> $GITHUB_OUTPUT
-            echo "👍 Release has not changed. Doing nothing."
+            echo "👍 Release has not changed or it is previous to the current one. Doing nothing."
           fi
 
       - name: 🔡 Remove 'n8n@' from release name to get the version
         id: n8n_version
-        if: steps.compare_releases.outputs.has_new_release == 'true'
+        if: steps.new_release_check.outputs.has_new_release == 'true'
         run: |
           version_to_release=$(echo "${{ steps.n8n_release.outputs.release }}" | sed 's/n8n@//g')
           echo "version_to_release=$version_to_release" >> $GITHUB_OUTPUT
