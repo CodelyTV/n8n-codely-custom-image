@@ -17,7 +17,7 @@ jobs:
       version_to_release: ${{ steps.n8n_version.outputs.version_to_release }}
 
     steps:
-      - name: 👀 Get the latest custom image stable release
+      - name: 👀 Get the latest Codely n8n custom image stable release
         id: custom_image_release
         uses: pozetroninc/github-action-get-latest-release@v0.7.0
         with:
@@ -44,7 +44,7 @@ jobs:
 
           latest_version=$(echo -e "$custom_version\n$n8n_version" | sort -V | tail -n1)
 
-          if [ "$n8n_version" = "$latest_version" ]; then
+          if [ "$custom_version" != "$latest_version" ]; then
             echo "has_new_release=true" >> $GITHUB_OUTPUT
             echo "🤩 New release detected! Releasing new custom image version in 1, 2…"
           else
