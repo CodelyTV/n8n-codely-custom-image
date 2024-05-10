@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: 👀 Get the latest Codely n8n custom image stable release
         id: custom_image_release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
         with:
           repository: CodelyTV/n8n-codely-custom-image
           excludes: prerelease,draft
@@ -27,7 +27,7 @@ jobs:
 
       - name: 🆕 Get the latest n8n stable release
         id: n8n_release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
         with:
           repository: n8n-io/n8n
           excludes: prerelease,draft
