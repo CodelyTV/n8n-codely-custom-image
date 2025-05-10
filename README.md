@@ -1,7 +1,8 @@
 # 🤖🐳 n8n Codely Custom Docker Image
 
-Custom Docker image including [our Twitch node](https://github.com/CodelyTV/n8n-nodes-twitch) and other dependencies
-we use in our n8n workflows such as `curl`, `chromium`, [and so on](Dockerfile).
+Custom Docker image including [our Twitch node](https://github.com/CodelyTV/n8n-nodes-twitch). Check the [`Dockerfile`](Dockerfile) to see the differences.
+
+We follow Docker image best practices reducing the amount of Docker layers generated in this image.
 
 ## How to use
 
