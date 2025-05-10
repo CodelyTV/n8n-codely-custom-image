@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      - uses: slackapi/slack-github-action@v1
+      - uses: slackapi/slack-github-action@v2
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.RELEASE_NOTIFICATION__SLACK_WEBHOOK_URL }}
         with:
